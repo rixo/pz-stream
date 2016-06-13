@@ -2,7 +2,9 @@
 
 const Stream = require('readable-stream');
 const Transform = Stream.Transform;
+const path = require('path');
 const util = require('util');
+const multimatch = require('multimatch');
 const PzBase = require('./PzBase');
 
 util.inherits(Split, Transform);
@@ -66,9 +68,12 @@ function split(name, pattern) {
   if (typeof pattern === 'function') {
     split.test = pattern;
   } else {
-    //split.test = file => splitTest(pattern, file);
-    throw new Error('Unsupported')
+    split.test = file => splitTest(pattern, file);
   }
   this._splits.push(split);
   return this;
+}
+
+function splitTest(pattern, file) {
+  return multimatch(path.relative(file.cwd, file.path), pattern).length > 0;
 }

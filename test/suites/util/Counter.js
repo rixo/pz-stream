@@ -15,6 +15,7 @@ function Counter() {
       done();
     }
   });
+  stream.count = 0;
   stream.chunks = chunks;
   return stream;
 }
