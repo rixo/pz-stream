@@ -1,0 +1,22 @@
+{
+  "name": "pz",
+  "version": "0.0.1",
+  "description": "Utility streams to easily compose complex and customizable stream circuits.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "streams"
+  ],
+  "author": "Rixo <rixo@protonmail.ch>",
+  "license": "MIT",
+  "dependencies": {
+    "multimatch": "^2.1.0",
+    "readable-stream": "^2.1.2"
+  },
+  "devDependencies": {
+    "mocha": "^2.4.5",
+    "unexpected": "^10.13.2"
+  }
+}
