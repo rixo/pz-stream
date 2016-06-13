@@ -9,9 +9,13 @@ const Stream = require('readable-stream');
 
 describe("Pz.Box", function() {
 
-  Suites(Box)
-    .infra()
-    .isPassThrough();
+  describe("infra", function() {
+    new Suites(Box).infra();
+  });
+
+  describe("is PassThrough", function() {
+    new Suites(Box).isPassThrough();
+  });
 
   it("works", function() {
     var counter = Counter();

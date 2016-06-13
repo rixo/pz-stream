@@ -3,12 +3,14 @@
 const Stream = require('readable-stream');
 const Transform = Stream.Transform;
 const util = require('util');
+const PzBase = require('./PzBase');
 
 util.inherits(Split, Transform);
 
 module.exports = Split;
 
-Split.obj = require('./obj')(Split);
+Split.obj = require('./obj')(Split).obj;
+Split.raw = require('./obj')(Split).raw;
 
 Split.prototype._transform = _transform;
 Split.prototype.split = split;
@@ -17,12 +19,9 @@ function Split(options) {
   if (!(this instanceof Split)) {
     return new Split(options);
   }
-  if (!options) {
-    options = {};
-  }
-  Transform.call(this, options);
+  PzBase.call(this, Split, options);
+  Transform.call(this, this._options);
 
-  this._options = options;
   this._splits = [];
 
   this._out = new Stream.Writable(options);

@@ -2,6 +2,7 @@
 
 module.exports = Pz;
 
+Pz.defaultObjectMode = true;
 Pz.obj = obj;
 //Pz.obj.Split = Split.obj;
 //Pz.obj.Box = Box.obj;

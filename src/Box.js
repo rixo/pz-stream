@@ -3,12 +3,14 @@
 const Stream = require('readable-stream');
 const Duplex = Stream.Duplex;
 const util = require('util');
+const PzBase = require('./PzBase');
 
 util.inherits(Box, Duplex);
 
 module.exports = Box;
 
-Box.obj = require('./obj')(Box);
+Box.obj = require('./obj')(Box).obj;
+Box.raw = require('./obj')(Box).raw;
 
 Box.prototype._write = _write;
 Box.prototype._read = (size) => {};
@@ -20,11 +22,8 @@ function Box(options) {
   if (!(this instanceof Box)) {
     return new Box(options);
   }
-  if (!options) {
-    options = {};
-  }
-
-  Duplex.call(this, options);
+  PzBase.call(this, Box, options);
+  Duplex.call(this, this._options);
 
   this._in = new Stream.Readable(options);
   this._in._read = (size) => this.read(size);

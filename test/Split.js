@@ -10,9 +10,13 @@ var Counter = Suites.Counter;
 
 describe("Pz.Split", function() {
 
-  new Suites(Split)
-    .infra()
-    .isPassThrough();
+  describe("infra", function() {
+    new Suites(Split).infra();
+  });
+
+  describe("is PassThrough", function() {
+    new Suites(Split).isPassThrough();
+  });
 
   describe("#split()", function() {
     var counter;
@@ -29,8 +33,7 @@ describe("Pz.Split", function() {
 
       input.push(null);
 
-      stream = Split.obj()
-        .split('big', o =>o.id > 1);
+      stream = Split.obj().split('big', o => o.id > 1);
     });
     it("creates a new stream with given filter", function(done) {
 
@@ -54,10 +57,7 @@ describe("Pz.Split", function() {
 
       input.push(null);
 
-      var stream = Split.obj()
-        .split('big', function(o) {
-          return o.id > 1;
-        });
+      var stream = Split.obj().split('big', (o) => o.id > 1);
 
       input
         .pipe(stream)
