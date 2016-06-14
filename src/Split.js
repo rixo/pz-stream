@@ -31,7 +31,10 @@ function Split(options) {
     this.push(chunk);
     done();
   };
-  this._out.on('finish', () => this.end());
+  //this._out.on('finish', () => {
+  //  this.push(null);
+  //});
+  //this._out.on('finish', () => this.end());
 
   this.on('end', () => {
     this._splits.forEach(

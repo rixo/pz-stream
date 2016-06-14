@@ -1,8 +1,8 @@
 'use strict';
 
-var expect = require('unexpected');
-var Stream = require('readable-stream');
-var Counter = require('./util/Counter');
+const expect = require('unexpected');
+const Stream = require('readable-stream');
+const Counter = require('./util/Counter');
 
 module.exports = isMetge;
 

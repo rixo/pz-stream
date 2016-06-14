@@ -16,4 +16,6 @@ describe("Pz.Pz", function() {
   describe("is PassThrough", suites.isPassThrough);
 
   describe("#merge()", suites.isMerge);
+
+  describe("is Box", suites.isBox);
 });

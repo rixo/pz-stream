@@ -32,9 +32,10 @@ function Box(options) {
     this.push(chunk);
     done();
   };
-  this._out.on('finish', () => {
-    this.push(null);
-  });
+  //this._out.on('finish', () => this.end());
+  //this._out.on('finish', () => {
+  //  this.push(null);
+  //});
 
   this._tip = this._in;
   this._top = this._out;

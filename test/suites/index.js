@@ -5,7 +5,8 @@ module.exports = Suites;
 var suites = {
   infra: require('./infra'),
   isPassThrough: require('./isPassThrough'),
-  isMerge: require('./isMerge')
+  isMerge: require('./isMerge'),
+  isBox: require('./isBox')
 };
 
 Suites.Counter = require('./util/Counter');
