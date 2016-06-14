@@ -1,19 +1,18 @@
 'use strict';
 
 const Stream = require('readable-stream');
-const Duplex = Stream.Duplex;
+const Transform = Stream.Transform;
 const util = require('util');
 const PzBase = require('./PzBase');
 
-util.inherits(Box, Duplex);
+util.inherits(Box, Transform);
 
 module.exports = Box;
 
 Box.obj = require('./obj')(Box).obj;
 Box.raw = require('./obj')(Box).raw;
 
-Box.prototype._write = _write;
-Box.prototype._read = (size) => {};
+Box.prototype._transform = _transform;
 
 Box.prototype.append = append;
 Box.prototype.prepend = prepend;
@@ -23,17 +22,10 @@ function Box(options) {
     return new Box(options);
   }
   PzBase.call(this, Box, options);
-  Duplex.call(this, this._options);
+  Transform.call(this, this._options);
 
   this._in = new Stream.Readable(options);
   this._in._read = (size) => this.read(size);
-  this.end = function(chunk) {
-    if (chunk) {
-      this._in.push(chunk);
-    }
-    this._in.push(null);
-    delete this.end;
-  };
 
   this._out = new Stream.Writable(options);
   this._out._write = (chunk, enc, done) => {
@@ -49,7 +41,7 @@ function Box(options) {
   this._in.pipe(this._out);
 }
 
-function _write(chunk, enc, done) {
+function _transform(chunk, enc, done) {
   this._in.push(chunk);
   done();
 }

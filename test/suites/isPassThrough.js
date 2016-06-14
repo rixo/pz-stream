@@ -1,7 +1,6 @@
 'use strict';
 
 var expect = require('unexpected');
-
 var Stream = require('readable-stream');
 var Counter = require('./util/Counter');
 
