@@ -18,7 +18,7 @@ Box.prototype.append = append;
 Box.prototype.prepend = prepend;
 
 function Box(options) {
-  if (!(this instanceof Box)) {
+  if (!(this instanceof Transform)) {
     return new Box(options);
   }
   PzBase.call(this, Box, options);

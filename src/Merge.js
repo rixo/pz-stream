@@ -13,6 +13,11 @@ Merge.obj = require('./obj')(Merge).obj;
 Merge.raw = require('./obj')(Merge).raw;
 
 Merge.prototype.end = function end() {
+  if (this._ends >= this._sources.length) {
+    //if (this._readableState.flowing) { // maybe superfluous
+      Stream.PassThrough.prototype.end.call(this);
+    //}
+  }
   return this;
 };
 Merge.prototype.resume = function resume() {
@@ -26,7 +31,7 @@ Merge.prototype.resume = function resume() {
 };
 
 function Merge(options) {
-  if (!(this instanceof Stream.Readable)) {
+  if (!(this instanceof Stream.Transform)) {
     return new Merge(options);
   }
   PzBase.call(this, Merge, options);

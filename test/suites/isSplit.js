@@ -30,10 +30,11 @@ function isSplit(TestedStream) {
 
       input
         .pipe(stream)
+        .resume() // FIXME? flowing is needed for Merge > Pz to finish
         .on('finish', function() {
           expect(counter.count, 'to be', 2);
           done();
-        })
+        });
     });
     it("outputs remaining files only", function(done) {
       input
@@ -68,10 +69,11 @@ function isSplit(TestedStream) {
       stream.foo.pipe(counter);
       input
         .pipe(stream)
+        .resume() // FIXME? flowing is needed for Merge > Pz to finish
         .on('finish', function() {
           expect(counter.count, 'to be', 2);
           done();
-        })
+        });
     });
 
     it("outputs remaining files only", function(done) {

@@ -4,9 +4,9 @@ const expect = require('unexpected');
 const Stream = require('readable-stream');
 const Counter = require('./util/Counter');
 
-module.exports = isMetge;
+module.exports = isMerge;
 
-function isMetge(TestedStream) {
+function isMerge(TestedStream) {
   var counter;
   var inputs;
   var stream;

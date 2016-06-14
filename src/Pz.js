@@ -17,6 +17,26 @@ Pz.defaultObjectMode = true;
 Pz.prototype.end = Merge.prototype.end;
 Pz.prototype.resume = Merge.prototype.resume;
 
+//Pz.prototype._transform = Split.prototype._transform;
+Pz.prototype._transform = function(chunk, encoding, done) {
+  var target;
+  this._splits.some(split => {
+    if (split.test(chunk, encoding)) {
+      target = split.stream;
+      return true;
+    }
+  });
+  if (target) {
+    target.write(chunk, encoding);
+  } else if (this._in) {
+    this._in.push(chunk);
+  } else {
+    this._out.write(chunk, encoding);
+  }
+  done();
+};
+Pz.prototype.split = Split.prototype.split;
+
 //Pz.prototype.$ = $;
 
 function Pz(options, parent) {
@@ -26,6 +46,7 @@ function Pz(options, parent) {
 
   Box.call(this, options);
   Merge.call(this, options);
+  Split.call(this, options);
 
   this._children = {};
   this._parent = parent;

@@ -18,7 +18,7 @@ Split.prototype._transform = _transform;
 Split.prototype.split = split;
 
 function Split(options) {
-  if (!(this instanceof Split)) {
+  if (!(this instanceof Stream.Transform)) {
     return new Split(options);
   }
   PzBase.call(this, Split, options);
@@ -26,15 +26,17 @@ function Split(options) {
 
   this._splits = [];
 
-  this._out = new Stream.Writable(options);
-  this._out._write = (chunk, end, done) => {
-    this.push(chunk);
-    done();
-  };
-  //this._out.on('finish', () => {
-  //  this.push(null);
-  //});
-  //this._out.on('finish', () => this.end());
+  if (!this._out) {
+    this._out = new Stream.Writable(options);
+    this._out._write = (chunk, end, done) => {
+      this.push(chunk);
+      done();
+    };
+    //this._out.on('finish', () => {
+    //  this.push(null);
+    //});
+    //this._out.on('finish', () => this.end());
+  }
 
   this.on('end', () => {
     this._splits.forEach(

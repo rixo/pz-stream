@@ -1,12 +1,7 @@
 'use strict';
 
-var expect = require('unexpected');
-
 var Pz = require('../src/Pz');
-var Stream = require('readable-stream');
-
 var Suites = require('./suites/');
-var Counter = Suites.Counter;
 
 describe("Pz.Pz", function() {
   const suites = new Suites(Pz);
@@ -16,6 +11,8 @@ describe("Pz.Pz", function() {
   describe("is PassThrough", suites.isPassThrough);
 
   describe("#merge()", suites.isMerge);
+
+  describe("#split()", suites.isSplit);
 
   describe("is Box", suites.isBox);
 });
