@@ -7,15 +7,9 @@ describe("Pz.Box", function() {
 
   const suites = new Suites(Box);
 
-  describe("infra", function() {
-    suites.infra();
-  });
+  describe("infra", suites.infra);
 
-  describe("is PassThrough", function() {
-    suites.isPassThrough();
-  });
+  describe("is PassThrough", suites.isPassThrough);
 
-  describe("is Box", function() {
-    suites.isBox();
-  });
+  describe("is Box", suites.isBox);
 });

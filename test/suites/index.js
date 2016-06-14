@@ -6,10 +6,11 @@ var suites = {
   infra: require('./infra'),
   isPassThrough: require('./isPassThrough'),
   isMerge: require('./isMerge'),
+  isSplit: require('./isSplit'),
   isBox: require('./isBox')
 };
 
-Suites.Counter = require('./util/Counter');
+//Suites.Counter = require('./util/Counter');
 
 function Suites(bind) {
   if (!(this instanceof Suites)) {
