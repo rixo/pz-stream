@@ -14,7 +14,7 @@ describe("Pz.Pz", function() {
 
   describe("#merge()", suites.isMerge);
 
-  describe.only("#split()", suites.isSplit);
+  describe("#split()", suites.isSplit);
 
   describe("is Box", suites.isBox);
 
@@ -24,7 +24,7 @@ describe("Pz.Pz", function() {
     const Counter = require('./suites/util/Counter');
     const _ = require('lodash');
 
-    it("merges after splits", function() {
+    it("merges and splits", function(done) {
       const pz = Pz.obj();
       const big = pz.split('big', item => item.num > 2 && item.alpha !== 'a').big;
       pz.id = 'pz';
@@ -38,27 +38,19 @@ describe("Pz.Pz", function() {
         input.pipe(pz);
         input.push(null);
       });
-      const promise = Promise.all([
-        new Promise(resolve => {
+      pz.pipe(counter)
+        .on('end', function() {
+          expect(counter.count, 'to be', 7);
           big
             .pipe(counterBig)
             .on('end', () => {
               expect(counterBig.count, 'to be', 2);
               expect(_.pluck(counterBig.chunks, 'id'), 'to equal', ['b3', 'c3']);
-              resolve();
-            })
-            .resume();
-        }),
-        new Promise(resolve => {
-          pz.pipe(counter)
-            .on('end', function() {
-              expect(counter.count, 'to be', 7);
-              resolve();
+              done();
             })
             .resume();
         })
-      ]);
-      return promise;
+        .resume();
     });
   });
 });

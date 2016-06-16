@@ -34,7 +34,6 @@ function isPassThrough(TestedStream) {
       stream
         .on('error', err => done(err))
         .on('finish', function() {
-          console.log(counter.chunks)
           expect(counter.count, 'to be', 3);
           expect(counter.chunks, 'to contain', inputs[0]);
           expect(counter.chunks, 'to contain', inputs[1]);

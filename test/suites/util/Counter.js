@@ -4,6 +4,8 @@ var Stream = require('readable-stream');
 
 module.exports = Counter;
 
+var lastIndex = 0;
+
 function Counter() {
   var chunks = [];
   var stream = new Stream.Transform({
@@ -17,5 +19,6 @@ function Counter() {
   });
   stream.count = 0;
   stream.chunks = chunks;
+  stream.$name = 'Counter#' + lastIndex++;
   return stream;
 }

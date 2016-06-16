@@ -15,21 +15,9 @@ Pz.raw = require('./obj')(Pz).raw;
 
 Pz.defaultObjectMode = true;
 
-//Pz.prototype.end = function end() {
-//  if (this._ends >= this._sources.length) {
-//    Box.prototype.end.apply(this, arguments);
-//    this._in.push(null);
-//  }
-//};
-Pz.prototype.resume = function resume() {
-  Box.prototype.resume.apply(this, arguments);
-  if (this._ends >= this._sources.length) {
-    Box.prototype.end.call(this);
-  }
-  return this;
-};
-//Pz.prototype.end = Merge.prototype.end;
-//Pz.prototype.resume = Merge.prototype.resume;
+Pz.prototype._doEnd = Box.prototype.end;
+Pz.prototype.end = Merge.prototype.end;
+Pz.prototype.resume = Merge.prototype.resume;
 
 //Pz.prototype._transform = Split.prototype._transform;
 Pz.prototype._transform = function(chunk, encoding, done) {

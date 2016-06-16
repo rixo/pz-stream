@@ -12,15 +12,16 @@ module.exports = Merge;
 Merge.obj = require('./obj')(Merge).obj;
 Merge.raw = require('./obj')(Merge).raw;
 
+Merge.prototype._doEnd = Stream.PassThrough.prototype.end;
 Merge.prototype.end = function end() {
   if (this._ends >= this._sources.length) {
-    Stream.PassThrough.prototype.end.call(this);
+    this._doEnd();
   }
 };
 Merge.prototype.resume = function resume() {
   Stream.PassThrough.prototype.resume.apply(this, arguments);
   if (this._ends >= this._sources.length) {
-    Stream.PassThrough.prototype.end.call(this);
+    this._doEnd();
   }
   return this;
 };
@@ -51,7 +52,7 @@ function add(source) {
     if (~sources.indexOf(source)) {
       if (++this._ends >= sources.length) {
         if (this._readableState.flowing) {
-          Stream.PassThrough.prototype.end.call(this);
+          this._doEnd();
         }
       }
     }
@@ -62,6 +63,6 @@ function remove(stream) {
   const sources = this._sources;
   sources.splice(sources.indexOf(stream), 1);
   if (!this._sources.length && this._readableState.flowing) {
-    Stream.PassThrough.prototype.end.call(this);
+    this._doEnd();
   }
 }

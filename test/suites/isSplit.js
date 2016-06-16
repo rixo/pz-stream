@@ -52,33 +52,6 @@ function isSplit(TestedStream) {
         })
         .resume();
     });
-    it("split stream ends as expected when piped before trunk", function(done) {
-      stream.big
-        .on('end', () => {
-          console.trace()
-          //expect(counter.count, 'to be', 2);
-          //done();
-        })
-        .pipe(counter)
-        .on('end', () => {
-          //console.trace()
-          expect(counter.count, 'to be', 2);
-          done();
-        });
-        //.resume();
-      input
-        .pipe(stream)
-        .on('end', () => {
-          console.trace()
-          counter
-            //.on('end', () => {
-            //  expect(counter.count, 'to be', 2);
-            //  done();
-            //})
-            .resume();
-        })
-        .resume();
-    });
   });
 
   describe("with pattern", function() {
