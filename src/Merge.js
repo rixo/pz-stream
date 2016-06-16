@@ -20,7 +20,7 @@ Merge.prototype.end = function end() {
 };
 Merge.prototype.resume = function resume() {
   Stream.PassThrough.prototype.resume.apply(this, arguments);
-  if (this._ends >= this._sources.length) {
+  if (this._ends >= this._sources.length && this._sources.length > 0) {
     this._doEnd();
   }
   return this;
@@ -63,6 +63,6 @@ function remove(stream) {
   const sources = this._sources;
   sources.splice(sources.indexOf(stream), 1);
   if (!this._sources.length && this._readableState.flowing) {
-    this._doEnd();
+    //this._doEnd();
   }
 }

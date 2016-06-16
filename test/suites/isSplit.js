@@ -52,6 +52,16 @@ function isSplit(TestedStream) {
         })
         .resume();
     });
+    it("allows piping of split before trunk", function(done) {
+      stream.big
+        .pipe(counter)
+        .on('end', () => {
+          expect(counter.count, 'to be', 2);
+          done();
+        })
+        .resume();
+      input.pipe(stream).resume();
+    });
   });
 
   describe("with pattern", function() {
@@ -73,19 +83,14 @@ function isSplit(TestedStream) {
     });
 
     it("creates a new stream with given pattern", function(done) {
-      //stream.foo.pipe(counter);
-      input
-        .pipe(stream)
-        .on('end', function() {
-          stream.foo
-            .pipe(counter)
-            .on('end', () => {
-              expect(counter.count, 'to be', 2);
-              done();
-            })
-            .resume();
+      stream.foo
+        .pipe(counter)
+        .on('end', () => {
+          expect(counter.count, 'to be', 2);
+          done();
         })
         .resume();
+      input.pipe(stream).resume();
     });
 
     it("outputs remaining files only", function(done) {

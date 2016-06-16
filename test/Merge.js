@@ -4,6 +4,7 @@ const Merge = require('../src/Merge');
 const Suites = require('./suites/');
 
 describe("Pz.Merge", function() {
+  this.timeout(100);
 
   const suites = new Suites(Merge);
 

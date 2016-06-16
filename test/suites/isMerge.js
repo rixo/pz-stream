@@ -97,13 +97,13 @@ function isMerge(TestedStream) {
       });
 
       it("is triggered when becoming flowing while not being waiting", function(done) {
-        var stream = TestedStream.obj();
-        var test = new Stream.PassThrough({objectMode: true});
-        var tooEarly = () => done('finished too early!');
+        const stream = TestedStream.obj();
+        const test = new Stream.PassThrough({objectMode: true});
+        const tooEarly = () => done('finished too early!');
         test
           .pipe(stream)
           .on(event, tooEarly);
-        test.unpipe(stream);
+        //test.unpipe(stream);
         test.end();
         stream.removeListener(event, tooEarly);
         stream
