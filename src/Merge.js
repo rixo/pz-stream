@@ -14,18 +14,14 @@ Merge.raw = require('./obj')(Merge).raw;
 
 Merge.prototype.end = function end() {
   if (this._ends >= this._sources.length) {
-    //if (this._readableState.flowing) { // maybe superfluous
-      Stream.PassThrough.prototype.end.call(this);
-    //}
+    Stream.PassThrough.prototype.end.call(this);
   }
   return this;
 };
 Merge.prototype.resume = function resume() {
   Stream.PassThrough.prototype.resume.apply(this, arguments);
   if (this._ends >= this._sources.length) {
-    if (this._readableState.flowing) { // maybe superfluous
-      Stream.PassThrough.prototype.end.call(this);
-    }
+    Stream.PassThrough.prototype.end.call(this);
   }
   return this;
 };

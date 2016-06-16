@@ -30,20 +30,21 @@ function isSplit(TestedStream) {
 
       input
         .pipe(stream)
-        .resume() // FIXME? flowing is needed for Merge > Pz to finish
-        .on('finish', function() {
+        .on('end', function() {
           expect(counter.count, 'to be', 2);
           done();
-        });
+        })
+        .resume();
     });
     it("outputs remaining files only", function(done) {
       input
         .pipe(stream)
         .pipe(counter)
-        .on('finish', function() {
+        .on('end', function() {
           expect(counter.count, 'to be', 1);
           done();
-        });
+        })
+        .resume();
     });
   });
 
@@ -69,21 +70,22 @@ function isSplit(TestedStream) {
       stream.foo.pipe(counter);
       input
         .pipe(stream)
-        .resume() // FIXME? flowing is needed for Merge > Pz to finish
-        .on('finish', function() {
+        .on('end', function() {
           expect(counter.count, 'to be', 2);
           done();
-        });
+        })
+        .resume();
     });
 
     it("outputs remaining files only", function(done) {
       input
         .pipe(stream)
         .pipe(counter)
-        .on('finish', function() {
+        .on('end', function() {
           expect(counter.count, 'to be', 1);
           done();
-        });
+        })
+        .resume();
     });
   });
 }
