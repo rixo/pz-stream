@@ -40,7 +40,7 @@ function Split(options) {
 
   this.on('end', () => {
     this._splits.forEach(
-      split => split.stream.emit('end')
+      split => split.stream.end()
     );
   });
 
@@ -64,8 +64,9 @@ function _transform(chunk, encoding, done) {
 }
 
 function split(name, pattern) {
-  const stream = new Split(this._options);
-  stream.name = name;
+  const stream = new this.constructor(this._options);
+  //const stream = new Split(this._options);
+  stream.$name = name;
   this[name] = stream;
   const split = {
     stream: stream

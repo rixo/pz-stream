@@ -1,12 +1,11 @@
 'use strict';
 
-var Merge = require('../src/Merge');
-
-var Suites = require('./suites/');
+const Merge = require('../src/Merge');
+const Suites = require('./suites/');
 
 describe("Pz.Merge", function() {
 
-  var suites = new Suites(Merge);
+  const suites = new Suites(Merge);
 
   describe("infra", suites.infra);
 

@@ -49,10 +49,15 @@ function isMerge(TestedStream) {
   });
 
   it("merges all inputs and ends", function(done) {
+    counter.end = function() {
+      console.trace();
+      Stream.PassThrough.prototype.end.apply(this, arguments)
+    };
     lateInput
       .pipe(stream)
       .pipe(counter)
       .on('end', function() {
+        console.trace();
         expect(counter.count, 'to be', 10);
         done();
       })

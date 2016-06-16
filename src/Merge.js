@@ -16,7 +16,6 @@ Merge.prototype.end = function end() {
   if (this._ends >= this._sources.length) {
     Stream.PassThrough.prototype.end.call(this);
   }
-  return this;
 };
 Merge.prototype.resume = function resume() {
   Stream.PassThrough.prototype.resume.apply(this, arguments);

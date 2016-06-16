@@ -1,6 +1,7 @@
 'use strict';
 
 const util = require('util');
+const Stream = require('readable-stream');
 const Box = require('./Box');
 const Merge = require('./Merge');
 const Split = require('./Split');
@@ -14,8 +15,21 @@ Pz.raw = require('./obj')(Pz).raw;
 
 Pz.defaultObjectMode = true;
 
-Pz.prototype.end = Merge.prototype.end;
-Pz.prototype.resume = Merge.prototype.resume;
+//Pz.prototype.end = function end() {
+//  if (this._ends >= this._sources.length) {
+//    Box.prototype.end.apply(this, arguments);
+//    this._in.push(null);
+//  }
+//};
+Pz.prototype.resume = function resume() {
+  Box.prototype.resume.apply(this, arguments);
+  if (this._ends >= this._sources.length) {
+    Box.prototype.end.call(this);
+  }
+  return this;
+};
+//Pz.prototype.end = Merge.prototype.end;
+//Pz.prototype.resume = Merge.prototype.resume;
 
 //Pz.prototype._transform = Split.prototype._transform;
 Pz.prototype._transform = function(chunk, encoding, done) {
@@ -26,6 +40,8 @@ Pz.prototype._transform = function(chunk, encoding, done) {
       return true;
     }
   });
+  //const _ = require('lodash');
+  //console.log(this.id, chunk, target, _.map(this._splits, 'test').map(fn => String(fn)))
   if (target) {
     target.write(chunk, encoding);
   } else if (this._in) {
@@ -35,6 +51,7 @@ Pz.prototype._transform = function(chunk, encoding, done) {
   }
   done();
 };
+
 Pz.prototype.split = Split.prototype.split;
 
 //Pz.prototype.$ = $;

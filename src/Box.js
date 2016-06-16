@@ -14,6 +14,11 @@ Box.raw = require('./obj')(Box).raw;
 
 Box.prototype._transform = _transform;
 
+Box.prototype.end = function end() {
+  Stream.Transform.prototype.end.apply(this, arguments);
+  this._in.push(null);
+};
+
 Box.prototype.append = append;
 Box.prototype.prepend = prepend;
 
@@ -25,17 +30,29 @@ function Box(options) {
   Transform.call(this, this._options);
 
   this._in = new Stream.Readable(options);
-  this._in._read = (size) => this.read(size);
+  //this._in._read = (size) => this.read(size);
+  this._in._read = size => {};
 
+  var flush;
+  var finished = false;
   this._out = new Stream.Writable(options);
   this._out._write = (chunk, enc, done) => {
     this.push(chunk);
     done();
   };
-  //this._out.on('finish', () => this.end());
-  //this._out.on('finish', () => {
-  //  this.push(null);
-  //});
+  this._out.on('finish', () => {
+    finished = true;
+    if (flush) {
+      flush();
+    }
+  });
+  this._flush = done => {
+    if (finished) {
+      done();
+    } else {
+      flush = done
+    }
+  };
 
   this._tip = this._in;
   this._top = this._out;

@@ -16,8 +16,11 @@ function isSplit(TestedStream) {
       counter = Counter();
       input = new Stream.PassThrough({objectMode: true});
 
-      [1, 2, 3].map(function(id) {
-        var o = {id: id};
+      [
+        {id: 1},
+        {id: 2},
+        {id: 3}
+      ].forEach(function(o) {
         input.push(o);
       });
 
@@ -26,13 +29,16 @@ function isSplit(TestedStream) {
       stream = TestedStream.obj().split('big', o => o.id > 1);
     });
     it("creates a new stream with given filter", function(done) {
-      stream.big.pipe(counter);
-
       input
         .pipe(stream)
-        .on('end', function() {
-          expect(counter.count, 'to be', 2);
-          done();
+        .on('end', () => {
+          stream.big
+            .pipe(counter)
+            .on('end', () => {
+              expect(counter.count, 'to be', 2);
+              done();
+            })
+            .resume();
         })
         .resume();
     });
@@ -43,6 +49,33 @@ function isSplit(TestedStream) {
         .on('end', function() {
           expect(counter.count, 'to be', 1);
           done();
+        })
+        .resume();
+    });
+    it("split stream ends as expected when piped before trunk", function(done) {
+      stream.big
+        .on('end', () => {
+          console.trace()
+          //expect(counter.count, 'to be', 2);
+          //done();
+        })
+        .pipe(counter)
+        .on('end', () => {
+          //console.trace()
+          expect(counter.count, 'to be', 2);
+          done();
+        });
+        //.resume();
+      input
+        .pipe(stream)
+        .on('end', () => {
+          console.trace()
+          counter
+            //.on('end', () => {
+            //  expect(counter.count, 'to be', 2);
+            //  done();
+            //})
+            .resume();
         })
         .resume();
     });
@@ -67,12 +100,17 @@ function isSplit(TestedStream) {
     });
 
     it("creates a new stream with given pattern", function(done) {
-      stream.foo.pipe(counter);
+      //stream.foo.pipe(counter);
       input
         .pipe(stream)
         .on('end', function() {
-          expect(counter.count, 'to be', 2);
-          done();
+          stream.foo
+            .pipe(counter)
+            .on('end', () => {
+              expect(counter.count, 'to be', 2);
+              done();
+            })
+            .resume();
         })
         .resume();
     });

@@ -26,7 +26,7 @@ function isPassThrough(TestedStream) {
       input.push(null);
 
       stream = input
-        .pipe(TestedStream.obj())
+        .pipe(new TestedStream({objectMode: true}))
         .pipe(counter);
     });
 
@@ -34,6 +34,7 @@ function isPassThrough(TestedStream) {
       stream
         .on('error', err => done(err))
         .on('finish', function() {
+          console.log(counter.chunks)
           expect(counter.count, 'to be', 3);
           expect(counter.chunks, 'to contain', inputs[0]);
           expect(counter.chunks, 'to contain', inputs[1]);
@@ -81,6 +82,28 @@ function isPassThrough(TestedStream) {
             .resume();
         })
       ])
+    });
+
+    it("reads what is written to it", done => {
+      const o = {id: 4};
+      const stream = new TestedStream({objectMode: true});
+      const counter = Counter();
+      stream.write(o, err => {
+        if (err) {
+          done(err);
+        } else {
+          stream
+            .pipe(counter)
+            .on('error', err => done(err))
+            .on('end', () => {
+              expect(counter.count, 'to be', 1);
+              expect(counter.chunks, 'to contain', o);
+              done();
+            })
+            .resume();
+          stream.end();
+        }
+      });
     });
   });
 }
