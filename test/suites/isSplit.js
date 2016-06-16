@@ -28,7 +28,12 @@ function isSplit(TestedStream) {
 
       stream = TestedStream.obj().split('big', o => o.id > 1);
     });
-    it("creates a new stream with given filter", function(done) {
+    it("creates a new stream of same type", function() {
+      expect(stream.big.constructor, 'to be', stream.constructor);
+      expect(stream.big.constructor, 'to be', TestedStream);
+    });
+    it("applies filter to input", function(done) {
+      expect(stream.big.constructor, 'to be', stream.constructor);
       input
         .pipe(stream)
         .on('end', () => {
@@ -52,7 +57,7 @@ function isSplit(TestedStream) {
         })
         .resume();
     });
-    it("allows piping of split before trunk", function(done) {
+    it("does not end if split stream is piped before trunk", function(done) {
       stream.big
         .pipe(counter)
         .on('end', () => {
@@ -81,8 +86,11 @@ function isSplit(TestedStream) {
 
       stream = TestedStream.obj().split('foo', '*/foo.*');
     });
-
-    it("creates a new stream with given pattern", function(done) {
+    it("creates a new stream of same type", () => {
+      expect(stream.foo.constructor, 'to be', stream.constructor);
+      expect(stream.foo.constructor, 'to be', TestedStream);
+    });
+    it("applies pattern to input", function(done) {
       stream.foo
         .pipe(counter)
         .on('end', () => {
@@ -92,8 +100,7 @@ function isSplit(TestedStream) {
         .resume();
       input.pipe(stream).resume();
     });
-
-    it("outputs remaining files only", function(done) {
+    it("outputs remaining files only", done => {
       input
         .pipe(stream)
         .pipe(counter)
@@ -102,6 +109,16 @@ function isSplit(TestedStream) {
           done();
         })
         .resume();
+    });
+    it("does not end if split stream is piped before trunk", done => {
+      stream.foo
+        .pipe(counter)
+        .on('end', () => {
+          expect(counter.count, 'to be', 2);
+          done();
+        })
+        .resume();
+      input.pipe(stream).resume();
     });
   });
 }
