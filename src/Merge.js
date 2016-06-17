@@ -13,18 +13,10 @@ Merge.obj = require('./obj')(Merge).obj;
 Merge.raw = require('./obj')(Merge).raw;
 
 Merge.prototype._doEnd = Stream.PassThrough.prototype.end;
-Merge.prototype.end = function end() {
-  if (this._ends >= this._sources.length) {
-    this._doEnd();
-  }
-};
-Merge.prototype.resume = function resume() {
-  Stream.PassThrough.prototype.resume.apply(this, arguments);
-  if (this._ends >= this._sources.length) {
-    this._doEnd();
-  }
-  return this;
-};
+Merge.prototype.end = end;
+Merge.prototype.resume = resume;
+
+Merge.prototype.merge = merge;
 
 function Merge(options) {
   if (!(this instanceof Stream.Transform)) {
@@ -65,4 +57,29 @@ function remove(stream) {
   if (!this._sources.length && this._readableState.flowing) {
     //this._doEnd();
   }
+}
+
+function end() {
+  if (this._ends >= this._sources.length) {
+    this._doEnd();
+  }
+}
+
+function resume() {
+  Stream.PassThrough.prototype.resume.apply(this, arguments);
+  if (this._ends >= this._sources.length) {
+    this._doEnd();
+  }
+  return this;
+}
+
+function merge() {
+  Array.prototype.slice.call(arguments).forEach(source => {
+    if (Array.isArray(source)) {
+      source.forEach(s => s.pipe(this));
+    } else {
+      source.pipe(this);
+    }
+  });
+  return this;
 }

@@ -17,7 +17,8 @@ Pz.defaultObjectMode = true;
 
 Pz.prototype._doEnd = Box.prototype.end;
 Pz.prototype.end = Merge.prototype.end;
-Pz.prototype.resume = Merge.prototype.resume;
+Pz.prototype.end = Merge.prototype.end;
+Pz.prototype.merge = Merge.prototype.merge;
 
 Pz.prototype._transform = function(chunk, encoding, done) {
   var target;

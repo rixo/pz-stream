@@ -12,65 +12,130 @@ function isMerge(TestedStream) {
   var stream;
   var lateInput;
 
-  beforeEach(function() {
-    counter = Counter();
+  describe("#pipe()", function() {
+    testInterface((stream, input) => {
+      return input.pipe(stream);
+    });
+  });
 
-    stream = TestedStream.obj();
+  describe("#merge()", function() {
+    testInterface((stream, input) => {
+      stream.merge(input);
+      return stream;
+    });
 
-    inputs = [];
+    describe("accepts multiple sources", function() {
+      var counter;
+      var stream;
+      var inputs;
 
-    ['a', 'b', 'c'].forEach(alpha => {
+      function createInput() {
+        const input = new Stream.PassThrough({objectMode: true});
+        [1,2,3].forEach(num => input.write(num));
+        input.end();
+        return input;
+      }
+      beforeEach(function() {
+        counter = Counter();
+        stream = TestedStream.obj();
+        inputs = [
+          createInput(),
+          createInput(),
+          createInput()
+        ];
+      });
+      it("as separate arguments", function(done) {
+        stream
+          .merge(inputs[0], inputs[1])
+          .pipe(counter)
+          .on('end', () => {
+            expect(counter.count, 'to be', 6);
+            done();
+          })
+          .resume();
+      });
+      it("as an array", function(done) {
+        stream
+          .merge(inputs)
+          .pipe(counter)
+          .on('end', () => {
+            expect(counter.count, 'to be', 9);
+            done();
+          })
+          .resume();
+      });
+      it("as arguments and array", function(done) {
+        const extra = createInput();
+        stream
+          .merge(extra, inputs)
+          .pipe(counter)
+          .on('end', () => {
+            expect(counter.count, 'to be', 12);
+            done();
+          })
+          .resume();
+      });
+    });
+  });
+
+  function testInterface(assemble) {
+    beforeEach(function() {
+      counter = Counter();
+
+      stream = TestedStream.obj();
+
+      inputs = [];
+
+      ['a', 'b', 'c'].forEach(alpha => {
+        var input = new Stream.PassThrough({objectMode: true});
+        [1, 2, 3].map(function(num) {
+          var o = {id: alpha + num, num: num, alpha: alpha};
+          input.push(o);
+        });
+        input.push(null);
+        inputs.push(input);
+        assemble(stream, input);
+      });
+
+      var _lateInput = new Stream.PassThrough({objectMode: true});
+      lateInput = _lateInput;
+      setTimeout(() => {
+        _lateInput.push({});
+        _lateInput.push(null);
+      });
+    });
+
+    it("merges all inputs and finishes", function(done) {
+      assemble(stream, lateInput)
+        .pipe(counter)
+        .on('finish', function() {
+          expect(counter.count, 'to be', 10);
+          done();
+        })
+    });
+
+    it("merges all inputs and ends", function(done) {
+      assemble(stream, lateInput)
+        .pipe(counter)
+        .on('end', function() {
+          expect(counter.count, 'to be', 10);
+          done();
+        })
+        .resume();
+    });
+
+    it("doesn't wait on unpiped sources", function(done) {
       var input = new Stream.PassThrough({objectMode: true});
-      [1, 2, 3].map(function(num) {
-        var o = {id: alpha + num, num: num, alpha: alpha};
-        input.push(o);
-      });
-      input.push(null);
-      inputs.push(input);
-      input.pipe(stream);
+      assemble(stream, input);
+      assemble(stream, lateInput)
+        .pipe(counter)
+        .on('finish', function() {
+          expect(counter.count, 'to be', 10);
+          done();
+        });
+      input.unpipe(stream);
     });
-
-    var _lateInput = new Stream.PassThrough({objectMode: true});
-    lateInput = _lateInput;
-    setTimeout(() => {
-      _lateInput.push({});
-      _lateInput.push(null);
-    });
-  });
-
-  it("merges all inputs and finishes", function(done) {
-    lateInput
-      .pipe(stream)
-      .pipe(counter)
-      .on('finish', function() {
-        expect(counter.count, 'to be', 10);
-        done();
-      })
-  });
-
-  it("merges all inputs and ends", function(done) {
-    lateInput
-      .pipe(stream)
-      .pipe(counter)
-      .on('end', function() {
-        expect(counter.count, 'to be', 10);
-        done();
-      })
-      .resume();
-  });
-
-  it("doesn't wait on unpiped sources", function(done) {
-    var input = new Stream.PassThrough({objectMode: true});
-    input.pipe(stream);
-    lateInput
-      .pipe(stream)
-      .pipe(counter)
-      .on('finish', function() {
-        expect(counter.count, 'to be', 10);
-        done();
-      });
-    input.unpipe(stream);
-  });
+  }
 
   ['finish', 'end'].forEach(event => {
     describe(event + " event", function() {
