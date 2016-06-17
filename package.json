@@ -1,6 +1,6 @@
 {
   "name": "pz",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utility streams to easily compose complex and customizable stream circuits.",
   "main": "index.js",
   "scripts": {
